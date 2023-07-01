@@ -24,6 +24,8 @@ go.work
 detour2-devel
 server.crt
 server.key
+detour.yaml
+detour-mappings.yaml
 old-ssl/
 
 # Backup

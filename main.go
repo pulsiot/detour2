@@ -2,13 +2,40 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 
 	"github.com/valyala/fasthttp"
+	"gopkg.in/yaml.v2"
 )
 
+// Mapping struct to hold the proxy domain and target URL
+type Mapping struct {
+	Domain    string `yaml:"domain"`
+	TargetURL string `yaml:"targetURL"`
+}
+
 func main() {
+	// Read the detour.yaml file
+	detourData, err := ioutil.ReadFile("detour.yaml")
+	if err != nil {
+		log.Fatal("Failed to read detour.yaml:", err)
+	}
+
+	// Parse the YAML data
+	var detourConfig struct {
+		Port      int       `yaml:"port"`
+		CertFile  string    `yaml:"certFile"`
+		KeyFile   string    `yaml:"keyFile"`
+		Mappings  []Mapping `yaml:"mappings"`
+	}
+	err = yaml.Unmarshal(detourData, &detourConfig)
+	if err != nil {
+		log.Fatal("Failed to parse detour.yaml:", err)
+	}
+
 	// Create a new TLS configuration
 	tlsConfig := &tls.Config{
 		MinVersion:               tls.VersionTLS12, // Set the minimum TLS version
@@ -17,7 +44,10 @@ func main() {
 
 	// Create a new HTTP client with TLS support
 	client := &fasthttp.Client{
-		TLSConfig: tlsConfig,
+		TLSConfig:           tlsConfig,
+		MaxResponseBodySize: 10 * 1024 * 1024, // 10MB max response size
+		ReadBufferSize:      4096,
+		WriteBufferSize:     4096,
 	}
 
 	// Create a new fasthttp server
@@ -26,15 +56,16 @@ func main() {
 			// Extract the requested host
 			host := string(ctx.Host())
 
-			// Define the mapping of domains to target URLs
-			targetURLs := map[string]string{
-				"domain.com":        "https://www.google.com",
-				"sales.domain.com":  "https://debuggerboy.com",
+			// Find the target URL for the requested host in the mappings
+			var targetURL string
+			for _, mapping := range detourConfig.Mappings {
+				if mapping.Domain == host {
+					targetURL = mapping.TargetURL
+					break
+				}
 			}
 
-			// Get the target URL for the requested host
-			targetURL, ok := targetURLs[host]
-			if !ok {
+			if targetURL == "" {
 				ctx.Error("Unknown host", fasthttp.StatusNotFound)
 				return
 			}
@@ -50,6 +81,7 @@ func main() {
 			ctx.URI().SetScheme(target.Scheme)
 			ctx.URI().SetHost(target.Host)
 			ctx.URI().SetPath(string(target.Path) + string(ctx.Path()))
+			ctx.URI().SetQueryStringBytes(ctx.QueryArgs().QueryString())
 
 			// Set the host header to the target host
 			ctx.Request.Header.SetHost(target.Host)
@@ -70,9 +102,8 @@ func main() {
 	}
 
 	// Listen for incoming HTTPS/TLS connections
-	err := server.ListenAndServeTLS(":443", "server.crt", "server.key")
+	err = server.ListenAndServeTLS(fmt.Sprintf(":%d", detourConfig.Port), detourConfig.CertFile, detourConfig.KeyFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-
