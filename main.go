@@ -18,10 +18,17 @@ type Mapping struct {
 }
 
 func main() {
+
+        configData, err := ioutil.ReadFile(configFile)
+        if err != nil {
+                log.Fatalf("Error reading config file: %s", err)
+        }
+
 	// Read the detour.yaml file
-	detourData, err := ioutil.ReadFile("detour.yaml")
+    configFile := "/etc/detour/detour2.yaml" // Replace with your YAML config file path
+	detourData, err := ioutil.ReadFile(configFile)
 	if err != nil {
-		log.Fatal("Failed to read detour.yaml:", err)
+		log.Fatal("Failed to read detour2.yaml:", err)
 	}
 
 	// Parse the YAML data
@@ -33,7 +40,7 @@ func main() {
 	}
 	err = yaml.Unmarshal(detourData, &detourConfig)
 	if err != nil {
-		log.Fatal("Failed to parse detour.yaml:", err)
+		log.Fatal("Failed to parse detour2.yaml:", err)
 	}
 
 	// Create a new TLS configuration

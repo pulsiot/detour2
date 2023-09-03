@@ -37,6 +37,12 @@ jobs:
         run:
           openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 3650 -nodes -subj "/C=IN/ST=Kerala/L=Kochi/O=Detour/OU=DetourProxy/CN=localhost"
 
+      - name: Generate Sample detour2 Configuration:
+        env:
+          DETOUR2_SAMPLE_CONFIG: ${{ secrets.DETOUR2_SAMPLE_CONFIG }}
+        run:
+          wget ${DETOUR2_SAMPLE_CONFIG}
+
       - name: build
         env:
           DOCKERHUB_ORG: ${{ vars.DOCKERHUB_ORG }}

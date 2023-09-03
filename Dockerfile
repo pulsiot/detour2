@@ -13,7 +13,7 @@ RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /bin/detour2-proxy
 # Create the detour config directory
 RUN mkdir -vp ${DETOUR_CONF_DIR}
-COPY detour.yaml.sample ${DETOUR_CONF_DIR}/detour.yaml
+COPY detour2.yaml ${DETOUR_CONF_DIR}
 COPY server.crt ${DETOUR_CONF_DIR}
 COPY server.key ${DETOUR_CONF_DIR}
 ############################
