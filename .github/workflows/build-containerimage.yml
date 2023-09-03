@@ -59,12 +59,7 @@ jobs:
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
-        env:
+        with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKERHUB_ORG: ${{ vars.DOCKERHUB_ORG }}
-          DOCKERHUB_REG: ${{ vars.DOCKERHUB_REG }}
-        with:
-          username: ${username}
-          password: ${password}
-          repository: ${DOCKER_ORG}/${DOCKER_REG}
+          repository: pulsiot/detour2
