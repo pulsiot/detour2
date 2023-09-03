@@ -18,12 +18,6 @@ type Mapping struct {
 }
 
 func main() {
-
-        configData, err := ioutil.ReadFile(configFile)
-        if err != nil {
-                log.Fatalf("Error reading config file: %s", err)
-        }
-
 	// Read the detour.yaml file
     configFile := "/etc/detour/detour2.yaml" // Replace with your YAML config file path
 	detourData, err := ioutil.ReadFile(configFile)
