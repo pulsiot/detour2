@@ -1,5 +1,7 @@
 # detour2 development
 
+[![Build Containerimage](https://github.com/pulsiot/detour2/actions/workflows/build-containerimage.yml/badge.svg)](https://github.com/pulsiot/detour2/actions/workflows/build-containerimage.yml)
+
 ## TLS Support
 
 We can create TLS Certificates using:
