@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate Sample detour2 Configuration
         env:
-          DETOUR2_SAMPLE_CONFIG: ${{ secrets.DETOUR2_SAMPLE_CONFIG }}
+          DETOUR2_SAMPLE_CONFIG: ${{ vars.DETOUR2_SAMPLE_CONFIG }}
         run:
           wget ${DETOUR2_SAMPLE_CONFIG}
 
