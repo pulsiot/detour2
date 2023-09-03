@@ -10,7 +10,7 @@ WORKDIR $GOPATH/src/${GITHUB_ORG}/${GITHUB_REPO}/
 COPY . .
 RUN go mod tidy
 # Build the binary.
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /bin/detour-proxy
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /bin/detour2-proxy
 # Create the detour config directory
 RUN mkdir -vp ${DETOUR_CONF_DIR}
 COPY detour.yaml.sample ${DETOUR_CONF_DIR}/detour.yaml
@@ -21,8 +21,8 @@ COPY server.key ${DETOUR_CONF_DIR}
 ############################
 FROM scratch
 # Copy our static executable.
-COPY --from=builder /bin/detour-proxy /app/detour-proxy
+COPY --from=builder /bin/detour2-proxy /app/detour2-proxy
 COPY --from=builder /build/etc /etc
 WORKDIR /app
 # Run the hello binary.
-ENTRYPOINT ["/app/detour-proxy"]
+ENTRYPOINT ["/app/detour2-proxy"]

@@ -55,7 +55,7 @@ jobs:
         uses: peter-evans/dockerhub-description@v3
         env:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
           DOCKERHUB_ORG: ${{ vars.DOCKERHUB_ORG }}
           DOCKERHUB_REG: ${{ vars.DOCKERHUB_REG }}
         with:
