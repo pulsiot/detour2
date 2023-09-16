@@ -23,6 +23,8 @@ FROM scratch
 # Copy our static executable.
 COPY --from=builder /bin/detour2-proxy /app/detour2-proxy
 COPY --from=builder /build/etc /etc
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /etc/passwd /etc/passwd
 WORKDIR /app
 # Run the hello binary.
 ENTRYPOINT ["/app/detour2-proxy"]
